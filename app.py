@@ -1,18 +1,19 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sat Mar 18 16:30:25 2023
-
-@author: excel
+Customer Segmentation Streamlit App
 """
 
 import streamlit as st
 import numpy as np
 import joblib
 
-# Load saved models
+# ----------- LOAD MODELS -----------
+
 scaler = joblib.load("scaler.pkl")
 pca = joblib.load("pca.pkl")
 kmeans = joblib.load("kmeans_model.pkl")
+
+# ----------- TITLE -----------
 
 st.title("Customer Segmentation App (K=3 Model)")
 st.write("Enter Customer Details:")
@@ -74,21 +75,26 @@ if st.button("Predict Cluster"):
         marital_status_YOLO
     ]])
 
+    # Scaling
     scaled = scaler.transform(input_data)
+
+    # PCA
     pca_transformed = pca.transform(scaled)
+
+    # KMeans Prediction
     cluster = kmeans.predict(pca_transformed)[0]
 
     # -------- Cluster Interpretation --------
 
     if cluster == 0:
         segment = "Budget / Low Spending Customer"
-        insight = "This customer has low purchasing activity. Target with discount offers and promotional campaigns."
+        insight = "Low purchasing activity. Target with discounts and promotional campaigns."
     elif cluster == 1:
         segment = "Premium / High Value Customer"
-        insight = "This customer contributes high revenue. Ideal for loyalty programs and exclusive offers."
+        insight = "High revenue contributor. Ideal for loyalty programs and exclusive offers."
     else:
         segment = "Regular / Moderate Customer"
-        insight = "This customer shows moderate engagement. Target with personalized recommendations."
+        insight = "Moderate engagement. Target with personalized recommendations."
 
     # -------- Spending Level --------
 
@@ -105,4 +111,5 @@ if st.button("Predict Cluster"):
     st.subheader(f"Segment: {segment}")
     st.write(f"Spending Level: {spending_level}")
     st.info(f"Business Insight: {insight}")
+
 
